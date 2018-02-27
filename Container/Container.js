@@ -1,5 +1,4 @@
-const path = require('path'),
-    { defined } = require(path.resolve('./Core'));
+const defined = require('../Lib/defined');
 
 module.exports = class Container {
     registerSingleton(key, singleton) {

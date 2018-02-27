@@ -1,6 +1,6 @@
 const path = require('path'), 
     fs = require('fs'),
-    { Immutable, defined } = require(path.resolve('./Core'));
+    { Immutable, defined } = require('../');
 
 class ConfigLoader {
 
@@ -9,7 +9,6 @@ class ConfigLoader {
     }
 
     constructor(immutable) {
-        console.info('Constructing: ConfigLoader');
         this.immutable = immutable;
         this._loadConfig = this._loadConfig.bind(this);
         this._loaderMiddleWare = this._loaderMiddleWare.bind(this);

@@ -9,7 +9,7 @@ module.exports = class RouterLoader {
 
     get container() { return this._container; }
     
-    get CoreRouter() { return this._coreRouter; }
+    get ExpressRouter() { return this._expressRouter; }
 
     loadRoutes() {
         this._configureParamNameDataMiddleware();
@@ -20,10 +20,10 @@ module.exports = class RouterLoader {
                 if (filename.indexOf(this.routeExtension) > -1) {
                     const NamespacedRouter = require(path.resolve('./Routing/' + filename));
                     const routeNamespace = NamespacedRouter.namespace || filename.replace(this.routeExtension, '').toLowerCase();
-                    const coreRouter = new this.CoreRouter();
-                    const router = new Router(this.container, coreRouter);
+                    const expressRouter = new this.ExpressRouter();
+                    const router = new Router(this.container, expressRouter);
                     new NamespacedRouter(router);
-                    this.container.make('app').use('/' + routeNamespace, coreRouter);
+                    this.container.make('app').use('/' + routeNamespace, expressRouter);
                 }
             });
         } catch (e) {
@@ -32,10 +32,10 @@ module.exports = class RouterLoader {
         }
     }
     
-    constructor(container, CoreRouter) {
+    constructor(container, ExpressRouter) {
         this._routeExtension = container.make('config').get('App.routeExt');
         this._container = container;
-        this._coreRouter = CoreRouter;
+        this._expressRouter = ExpressRouter;
     }
 
     _configureParamNameDataMiddleware() {

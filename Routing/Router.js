@@ -1,5 +1,5 @@
 const path = require('path'),
-    { defined } = require(path.resolve('./Core')),
+    defined = require('../Lib/defined'),
     constants = require('./Router.contants'),
     { DATA } = constants;
 

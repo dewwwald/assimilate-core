@@ -1,7 +1,5 @@
-const path = require('path');
-
 function setupContainer() {
-    const { Container } = require(path.resolve('./Core/Container'));
+    const { Container } = require('./Container');
     const container = new Container();
     return container;
 }

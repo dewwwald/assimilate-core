@@ -1,13 +1,14 @@
 const path = require('path'),
+    root = require('module-root'),
     Provider = require('./Provider');
 
 module.exports = class ConfigProvider extends Provider {
     initialize(next) {
-        const configLoaderInstance = require(path.resolve('./Core/Config/Config.loader'));
+        const configLoaderInstance = require('../Config/Config.loader');
         configLoaderInstance
         .getConfig()
         .then(config => {
-            const Config = require(path.resolve('./Core/Config/Config'))
+            const Config = require('../Config/Config')
             next(new Config(config));
         })
         .catch(console.error);

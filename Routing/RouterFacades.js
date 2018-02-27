@@ -1,5 +1,5 @@
 const path = require('path'),
-    { FacadeProvider } = require(path.resolve('./Core')),
+    FacadeProvider = require('../Lib/FacadeProvider'),
     Router = require('./Router');
 
 module.exports = class RouterFacades extends FacadeProvider {
