@@ -1,5 +1,4 @@
 const path = require('path'),
-    root = require('module-root'),
     Provider = require('./Provider');
 
 module.exports = class ConfigProvider extends Provider {
