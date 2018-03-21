@@ -4,19 +4,20 @@ const fs = require('fs'),
     Schema = mongoose.Schema;
 
 module.exports = class Database {
-    setupVariables(modelExt) {
-        /**
-         * Extension of Model files
-         * @var modelExt
-         */
-        this.modelExt = modelExt;
-        
-        /**
-         * contains a list of all registered models
-         * @var modelList
-         */
-        this.modelList = [];
-    }
+    /**
+     * Extension of Model files
+     * @var modelExt
+     */
+    get modelExt() { return this._modelExt; }
+    set modelExt(modelExt) { this._modelExt = modelExt; }
+
+    /**
+     * contains a list of all registered models
+     * @var modelList
+     */
+    get modelList() { return this._modelList || []; }
+    set modelList(value) { this._modelList = value; }
+
 
     initialize() {
         const filenameList = fs.readdirSync(path.resolve('./Models'));
