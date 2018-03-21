@@ -37,7 +37,7 @@ module.exports = class Container {
         this.creators = {};
     }
 
-    _createInstance(_Object, args) {
+    _createInstance(CreatorObject, args) {
         try {
             return CreatorObject(...args);
         } catch (e) {
