@@ -12,6 +12,6 @@ module.exports = [
     DatabaseProvider,
     MiddlewareProvider,
     ModelsProvider,
+    ExtensionProvider,
     RouterProvider,
-    ExtensionProvider
 ];
