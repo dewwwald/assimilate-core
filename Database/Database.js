@@ -36,9 +36,15 @@ module.exports = class Database {
      */
     constructor(config, modelExt) {
         if (config.connector === 'mongodb') {
-            mongoose.connect('mongodb://' + config.host + ':' + config.port + '/' + config.database);
-            this.setupVariables(modelExt);
-            this.initialize();
+          mongoose.connect(`mongodb://${config.host}:${config.port}/${config.database}`)
+            .then(() => {
+              console.log(`Mongo DB connected, mongodb://${config.host}:${config.port}/${config.database}`);
+            })
+            .catch(e => {
+              console.error(e);
+            });
+          this.modelExt = modelExt;
+          this.initialize();
         } else {
             throw new Error('connector mongodb is the only supported connector type');
         }
