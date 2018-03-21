@@ -37,12 +37,20 @@ module.exports = class Container {
         this.creators = {};
     }
 
-    _runCreator(key, args = []) {
+    _createInstance(_Object, args) {
         try {
-            const ClassObj = this.creators[key];
-            return new ClassObj(...args);
+            return CreatorObject(...args);
         } catch (e) {
-            return this.creators[key](...args);
+            return new CreatorObject(...args);
+        }
+    }
+
+    _runCreator(key, args = []) {
+        const CreatorObject = this.creators[key];
+        try {
+            return this._createInstance(CreatorObject, args);
+        } catch (e) {
+            console.error(e);
         }
     }
     
