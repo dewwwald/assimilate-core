@@ -5,12 +5,14 @@ const Provider = require('./Provider'),
 
 module.exports = class TestProvider extends Provider {
     register() {
-        this.container.registerSingleton('test/agent', request(this.container.make('app')));
         this.config = this.container.make('config');
-        this.testFileExt = this.config.get('Test.testExtension') || 'test.js';
-        const testAbles = this.config.get('Test.testAbles');
-        if (testAbles.length > 0) {
-            this._loadTests(testAbles);
+        if (this.config.get('environment') === 'test') {
+            this.container.registerSingleton('test/agent', request(this.container.make('app')));
+            this.testFileExt = this.config.get('Test.testExtension') || 'test.js';
+            const testAbles = this.config.get('Test.testAbles');
+            if (testAbles.length > 0) {
+                this._loadTests(testAbles);
+            }
         }
     }
 

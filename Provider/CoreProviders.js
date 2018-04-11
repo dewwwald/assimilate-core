@@ -5,7 +5,8 @@ const ConfigProvider = require('./ConfigProvider'),
     ModelsProvider = require('./ModelsProvider'),
     RouterProvider = require('./RouterProvider'),
     ExtensionProvider = require('./ExtensionProvider'),
-    TestProvider = require('./TestProvider');
+    TestProvider = require('./TestProvider'),
+    SeederProvider = require('./SeederProvider');
 
 module.exports = [
     ConfigProvider,
@@ -15,5 +16,6 @@ module.exports = [
     ModelsProvider,
     ExtensionProvider,
     RouterProvider,
+    SeederProvider,
     TestProvider,
 ];

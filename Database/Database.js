@@ -20,14 +20,12 @@ module.exports = class Database {
 
 
     initialize() {
-        const filenameList = fs.readdirSync(path.resolve('./Models'));
-        filenameList.forEach(filename => {
-            const Model = require(path.resolve('./Models/' + filename));
-            const modelName = Model.list || filename.replace(this.modelExt, '');
-            const schema = new Schema(Model.schema, Model.schemaOptions);
-            mongoose.model(modelName, schema);
-            this._setupModelClassBinding(modelName);
-        });
+        const customModelsRoot = path.resolve('./Models');
+        const filenameList = fs.readdirSync(customModelsRoot);
+        const coreModelsRoot = `${__dirname}/Models`;
+        const coreFilenameList = fs.readdirSync(coreModelsRoot);
+        filenameList.forEach(this._addModels.bind(this, customModelsRoot));
+        coreFilenameList.forEach(this._addModels.bind(this, coreModelsRoot));
     }
 
     /**
@@ -48,6 +46,14 @@ module.exports = class Database {
         } else {
             throw new Error('connector mongodb is the only supported connector type');
         }
+    }
+
+    _addModels(root, filename) {
+        const Model = require(`${root}/${filename}`);
+        const modelName = Model.list || filename.replace(this.modelExt, '');
+        const schema = new Schema(Model.schema, Model.schemaOptions);
+        mongoose.model(modelName, schema);
+        this._setupModelClassBinding(modelName);
     }
 
     _getModel(modelName) {

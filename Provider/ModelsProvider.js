@@ -4,13 +4,20 @@ const Provider = require('./Provider'),
 
 module.exports = class ModelsProvider extends Provider {
     register() {
-        const filenameList = fs.readdirSync(path.resolve('./Models'));
+        const customModelsRoot = path.resolve('./Models');
+        const filenameList = fs.readdirSync(customModelsRoot);
+        const coreModelsRoot = `${__dirname}/../Database/Models`;
+        const coreFilenameList = fs.readdirSync(coreModelsRoot);
         const config = this.container.make('config');
         const modelExt = config.get('App.modelExt');
-        filenameList.forEach(filename => {
-            const Model = require(path.resolve('./Models/' + filename));
-            const modelName = Model.list || filename.replace(modelExt, '');
-            this.container.register('Model/' + modelName, Model.bind(null, modelName));
-        });
+        filenameList.forEach(this._addModels.bind(this, customModelsRoot, modelExt));
+        coreFilenameList.forEach(this._addModels.bind(this, coreModelsRoot, modelExt));
+
+    }
+
+    _addModels(root, modelExt, filename) {
+        const Model = require(`${root}/${filename}`);
+        const modelName = Model.list || filename.replace(modelExt, '');
+        this.container.register('Model/' + modelName, Model.bind(null, modelName));
     }
 }
