@@ -4,7 +4,8 @@ const ConfigProvider = require('./ConfigProvider'),
     MiddlewareProvider = require('./MiddlewareProvider'),
     ModelsProvider = require('./ModelsProvider'),
     RouterProvider = require('./RouterProvider'),
-    ExtensionProvider = require('./ExtensionProvider');
+    ExtensionProvider = require('./ExtensionProvider'),
+    TestProvider = require('./TestProvider');
 
 module.exports = [
     ConfigProvider,
@@ -14,4 +15,5 @@ module.exports = [
     ModelsProvider,
     ExtensionProvider,
     RouterProvider,
+    TestProvider,
 ];
