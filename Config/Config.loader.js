@@ -1,5 +1,6 @@
 const path = require('path'), 
     fs = require('fs'),
+    deepAssign = require('deep-assign'),
     { Immutable, defined } = require('../');
 
 class ConfigLoader {
@@ -17,10 +18,22 @@ class ConfigLoader {
     _resolveConfigFiles(filenameList) {
         const config = {};
         filenameList.forEach(filename => {
-            const namespace = filename.split('.')[0];
-            config[namespace] = require(path.resolve('./Config/' + filename));
+            const filePath = path.resolve('./Config/' + filename);
+            const fStat = fs.statSync(filePath);
+            if (fStat.isFile()) {
+                const namespace = filename.split('.')[0];
+                config[namespace] = require(filePath);
+            }
         });
         return config;
+    }
+
+    _expandEnvironmentConfig() {
+        const filePath = path.resolve(`./Config/Environments/${process.env.ENVIRONMENT}.js`);
+        if (fs.existsSync(filePath)) {
+            return require(filePath);
+        }
+        return {};
     }
 
     _handleConfigFileList(err, filenameList, resolve, reject) {
@@ -28,13 +41,18 @@ class ConfigLoader {
             reject(err);
             return;
         }
-        this._setConfig(this._resolveConfigFiles(filenameList));
-        resolve(this.config);
+        Promise.all([
+            this._resolveConfigFiles(filenameList), 
+            this._expandEnvironmentConfig()
+        ]).then(([config, envConfig]) => {
+            this._setConfig(deepAssign(config, envConfig, { environment: process.env.ENVIRONMENT }));
+            resolve(this.config);
+        });
     }
 
     _loadConfig(resolve, reject) {    
         fs.readdir(
-            path.resolve('./Config/'), 
+            path.resolve('./Config/'),
             (error, filenameList) => this._handleConfigFileList
                 .apply(this, [error, filenameList, ...arguments]));
     }
