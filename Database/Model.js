@@ -3,6 +3,10 @@ const path = require('path'),
     { Types } = mongoose;
 
 module.exports = class Model {
+    static get schemaOptions() {
+        return {};
+    }
+
     get list() {
         return this._list || undefined;
     }

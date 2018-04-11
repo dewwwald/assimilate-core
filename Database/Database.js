@@ -24,7 +24,7 @@ module.exports = class Database {
         filenameList.forEach(filename => {
             const Model = require(path.resolve('./Models/' + filename));
             const modelName = Model.list || filename.replace(this.modelExt, '');
-            const schema = new Schema(Model.schema);
+            const schema = new Schema(Model.schema, Model.schemaOptions);
             mongoose.model(modelName, schema);
             this._setupModelClassBinding(modelName);
         });
