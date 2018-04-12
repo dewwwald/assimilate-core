@@ -110,7 +110,6 @@ module.exports = class Model {
         } else if (typeof serializable.length !== 'undefined') {
             const data = this.toJSON()._doc || this.toJSON();
             Object.keys(data).forEach(key => {
-                console.log(serializable, key);
                 if (!serializable.includes(key)) {
                     delete data[key];
                 }
