@@ -1,3 +1,5 @@
+'use-strict';
+
 module.exports = class Immutable {
     /**
      * Consumes a list of objects and make a new shallow assigned object

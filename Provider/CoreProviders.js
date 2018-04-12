@@ -1,3 +1,5 @@
+'use-strict';
+
 const ConfigProvider = require('./ConfigProvider'),
     AppProvider = require('./AppProvider'),
     DatabaseProvider = require('./DatabaseProvider'),

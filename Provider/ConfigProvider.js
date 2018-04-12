@@ -1,3 +1,5 @@
+'use-strict';
+
 const path = require('path'),
     Provider = require('./Provider');
 

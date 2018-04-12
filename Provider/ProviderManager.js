@@ -1,3 +1,5 @@
+'use-strict';
+
 module.exports = class ProviderManager {
     get container() {
         return this._container;

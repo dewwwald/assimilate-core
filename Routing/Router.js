@@ -1,3 +1,5 @@
+'use-strict';
+
 const path = require('path'),
     defined = require('../Lib/defined'),
     constants = require('./Router.contants'),

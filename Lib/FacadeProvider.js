@@ -1,3 +1,5 @@
+'use-strict';
+
 module.exports = class FacadeProvider {
     constructor(TargetClass, ...args) {
         const targetClass = new TargetClass(...args);

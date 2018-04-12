@@ -1,3 +1,5 @@
+'use-strict';
+
 const Provider = require('./Provider');
 
 module.exports = class DatabaseProvider extends Provider {

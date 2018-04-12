@@ -1,3 +1,5 @@
+'use-strict';
+
 const path = require('path'),
     FacadeProvider = require('../Lib/FacadeProvider'),
     Router = require('./Router');

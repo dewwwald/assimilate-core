@@ -1,3 +1,5 @@
+'use-strict';
+
 module.exports = function pipeline(context, ...functions) {
     return (...args) => functions
         .reduce((currArg, func) => {

@@ -1,3 +1,5 @@
+'use-strict';
+
 module.exports = class Seeder {
     constructor(container) {
         this.container = container;

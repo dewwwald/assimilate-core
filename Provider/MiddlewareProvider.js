@@ -1,3 +1,5 @@
+'use-strict';
+
 const Provider = require('./Provider'),
     bodyparser = require('body-parser');
 

@@ -1,3 +1,5 @@
+'use-strict';
+
 const express = require('express'),
     Provider = require('./Provider'),
     path = require('path');

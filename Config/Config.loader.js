@@ -1,3 +1,5 @@
+'use-strict';
+
 const path = require('path'), 
     fs = require('fs'),
     deepAssign = require('deep-assign'),

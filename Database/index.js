@@ -1,3 +1,5 @@
+'use-strict';
+
 const Model = require('./Model'),
     Database = require('./Database'),
     Seeder = require('./Seeder'),

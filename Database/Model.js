@@ -1,3 +1,5 @@
+'use-strict';
+
 const path = require('path'),
     mongoose = require('mongoose'),
     { Types } = mongoose;

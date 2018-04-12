@@ -1,3 +1,5 @@
+'use-strict';
+
 const defined = require('../Lib/defined');
 
 module.exports = class Container {

@@ -1,3 +1,5 @@
+'use-strict';
+
 const Config = require('./Config'),
     ConfigLoader = require('./ConfigLoader');
 

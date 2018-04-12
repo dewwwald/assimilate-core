@@ -1,3 +1,5 @@
+'use-strict';
+
 const { Model, SERIALIZE_ALL } = require('../');
 
 module.exports = class SeederModel extends Model {

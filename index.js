@@ -1,3 +1,5 @@
+'use-strict';
+
 const Immutable = require('./Lib/Immutable'),
     FacadeProvider = require('./Lib/FacadeProvider'),
     { Provider } = require('./Provider'),

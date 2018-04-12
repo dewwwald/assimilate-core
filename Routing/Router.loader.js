@@ -1,3 +1,5 @@
+'use-strict';
+
 const path = require('path'), 
     fs = require('fs'),
     Router = require('./Router'),

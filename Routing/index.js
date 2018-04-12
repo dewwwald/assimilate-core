@@ -1,3 +1,5 @@
+'use-strict';
+
 const Router = require('./Router'),
     RouterLoader = require('./Router.loader'),
     RouterFacades = require('./RouterFacades'),
