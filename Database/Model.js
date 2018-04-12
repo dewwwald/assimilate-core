@@ -53,7 +53,7 @@ module.exports = class Model {
         return new Promise((function updateProimise(resolve, reject) {
             this.model.findByIdAndUpdate(this.data._id, { 
                 $set: {data} 
-            }, this._updateResponseHandle.bind(resolve, reject, data));
+            }, this._updateResponseHandle.bind(this, resolve, reject, data));
         }).bind(this));
     }
 
