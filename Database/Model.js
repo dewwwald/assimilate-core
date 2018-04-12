@@ -49,6 +49,14 @@ module.exports = class Model {
         }).bind(this));
     }
 
+    update(data) {
+        return new Promise((function updateProimise(resolve, reject) {
+            this.model.findByIdAndUpdate(this.data._id, { 
+                $set: {data} 
+            }, this._updateResponseHandle.bind(resolve, reject, data));
+        }).bind(this));
+    }
+
     delete() {
         return new Promise((function deleteProimise(resolve, reject) {
             if (this.data) {
@@ -69,6 +77,12 @@ module.exports = class Model {
         this._list = modelName;
         this.model = mongoose.model(modelName);
         this._data = data || {};
+    }
+
+    _updateResponseHandle(resolve, reject, data, error) {
+        if (error) return reject(error);
+        this._data = { ...this.data, ...data };
+        resolve(this);
     }
 
     _queryResponseHandle (resolve, reject, error, result) {
