@@ -27,6 +27,7 @@ module.exports = class Container {
             if (soft) {
                 return undefined
             } else {
+                console.error(key + ': could not be created');
                 throw e;
             }
         }

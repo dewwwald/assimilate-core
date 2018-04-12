@@ -135,8 +135,11 @@ module.exports = class Router {
     _configureParamNameMiddleware(param) {
         const tries = [param.charAt(0).toUpperCase() + param.substring(1), param];
         let i = 0, model = undefined;
+        const database = this.container.make('database');
         do {
-            model = this.container.make('Model/' + tries[i], undefined, true);    
+            if (database.modelList.includes('Model/' + tries[i])) {
+                model = this.container.make('Model/' + tries[i], undefined, true);    
+            }
             i++;
         } while (i < tries.length && !defined(model)) 
         if (defined(model)) {
