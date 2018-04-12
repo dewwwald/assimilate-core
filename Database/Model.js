@@ -111,6 +111,8 @@ module.exports = class Model {
     }
 
     serialize() {
+        if (!this.data) 
+            throw new Error(`attempted to @epitome.Model.serialize ${this.list} when unknown`);
         const serializable = this.serializable || SERIALIZE_ALL
         if (serializable === SERIALIZE_ALL) {
             return this.data;
