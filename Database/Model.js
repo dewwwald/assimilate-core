@@ -2,7 +2,8 @@
 
 const path = require('path'),
     mongoose = require('mongoose'),
-    { Types } = mongoose;
+    { Types } = mongoose,
+    SERIALIZE_ALL = require('../');
 
 module.exports = class Model {
     static get schemaOptions() {
@@ -54,7 +55,7 @@ module.exports = class Model {
     update(data) {
         return new Promise((function updateProimise(resolve, reject) {
             this.model.findByIdAndUpdate(this.data._id, { 
-                $set: {data} 
+                $set: data
             }, this._updateResponseHandle.bind(this, resolve, reject, data));
         }).bind(this));
     }
@@ -83,7 +84,9 @@ module.exports = class Model {
 
     _updateResponseHandle(resolve, reject, data, error) {
         if (error) return reject(error);
-        this._data = { ...this.data, ...data };
+        Object.keys(data).forEach(key => {
+            this._data[key] = data[key];
+        });
         resolve(this);
     }
 
@@ -98,5 +101,23 @@ module.exports = class Model {
 
     toJSON() {
         return this.data;
+    }
+
+    serialize() {
+        const serializable = this.serializable || SERIALIZE_ALL
+        if (serializable === SERIALIZE_ALL) {
+            return this.data;
+        } else if (typeof serializable.length !== 'undefined') {
+            const data = this.toJSON()._doc || this.toJSON();
+            Object.keys(data).forEach(key => {
+                console.log(serializable, key);
+                if (!serializable.includes(key)) {
+                    delete data[key];
+                }
+            });
+            return data;
+        } else {
+            return [];
+        }
     }
 }
