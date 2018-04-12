@@ -6,19 +6,14 @@ const path = require('path'),
 module.exports = class ConfigProvider extends Provider {
     initialize(next) {
         const configLoaderInstance = require('../Config/Config.loader');
-        configLoaderInstance
-        .getConfig()
-        .then(config => {
+        configLoaderInstance.getConfig().then(config => {
             const Config = require('../Config/Config')
-            next(new Config(config));
-        })
-        .catch(e => {
+            const configSingleton = new Config(config);
+            this.container.registerSingleton('config', configSingleton);
+            next();
+        }).catch(e => {
             console.error(e);
             throw e;
         });
-    }
-
-    register(configInstance) {
-        this.container.registerSingleton('config', configInstance);
     }
 }

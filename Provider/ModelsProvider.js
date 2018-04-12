@@ -5,7 +5,7 @@ const Provider = require('./Provider'),
     fs = require('fs');
 
 module.exports = class ModelsProvider extends Provider {
-    register() {
+    initialize(next) {
         const customModelsRoot = path.resolve('./Models');
         const filenameList = fs.readdirSync(customModelsRoot);
         const coreModelsRoot = `${__dirname}/../Database/Models`;
@@ -14,7 +14,7 @@ module.exports = class ModelsProvider extends Provider {
         const modelExt = config.get('App.modelExt');
         filenameList.forEach(this._addModels.bind(this, customModelsRoot, modelExt));
         coreFilenameList.forEach(this._addModels.bind(this, coreModelsRoot, modelExt));
-
+        next();
     }
 
     _addModels(root, modelExt, filename) {

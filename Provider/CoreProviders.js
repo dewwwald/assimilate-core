@@ -6,7 +6,7 @@ const ConfigProvider = require('./ConfigProvider'),
     MiddlewareProvider = require('./MiddlewareProvider'),
     ModelsProvider = require('./ModelsProvider'),
     RouterProvider = require('./RouterProvider'),
-    ExtensionProvider = require('./ExtensionProvider'),
+    ProviderExtensions = require('./ProviderExtensions'),
     TestProvider = require('./TestProvider'),
     SeederProvider = require('./SeederProvider');
 
@@ -16,7 +16,7 @@ module.exports = [
     DatabaseProvider,
     MiddlewareProvider,
     ModelsProvider,
-    ExtensionProvider,
+    ...ProviderExtensions.get(),
     RouterProvider,
     SeederProvider,
     TestProvider,

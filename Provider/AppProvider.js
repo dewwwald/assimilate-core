@@ -4,8 +4,9 @@ const express = require('express'),
     Provider = require('./Provider');
 
 module.exports = class AppProvider extends Provider {
-    register() {
+    initialize(done) {
         this.container.registerSingleton('app', express);
+        done();
     }
 
     final() {

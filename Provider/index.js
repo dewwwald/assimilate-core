@@ -1,11 +1,9 @@
 'use-strict';
 
 const Provider = require('./Provider'),
-    ProviderManager = require('./ProviderManager'),
-    CoreProviders = require('./CoreProviders');
+    ProviderManager = require('./ProviderManager');
 
 module.exports = {
     ProviderManager,
-    Provider,
-    CoreProviders,
+    Provider
 }
