@@ -34,53 +34,68 @@ module.exports = class Router {
         return this._app;
     }
 
-    get(path, connector) {
-        const connectionFunction = this._getConnector(connector);
+    get(path, ...connectors) {
+        const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
+        connectionFunctions.map(connectionFunction => {
+            return this._wrapFunction.apply(null, [connectionFunction, ...args]);
+        });
         this.router
             .route(this._makePath(path))
-            .get(this._wrapFunction.apply(null, [connectionFunction, ...args]));
+            .get(...connectionFunctions);
         return this;
     }
     
-    post(path, connector) {
-        const connectionFunction = this._getConnector(connector);
+    post(path, ...connectors) {
+        const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
+        connectionFunctions.map(connectionFunction => {
+            return this._wrapFunction.apply(null, [connectionFunction, ...args, DATA]);
+        });
         this.router
             .route(this._makePath(path))
-            .post(this._wrapFunction.apply(null, [connectionFunction, ...args, DATA]));
+            .post(...connectionFunctions);
         return this;
     }
     
-    put(path, connector) {
-        const connectionFunction = this._getConnector(connector);
+    put(path, ...connectors) {
+        const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
+        connectionFunctions.map(connectionFunction => {
+            return this._wrapFunction.apply(null, [connectionFunction, ...args, DATA]);
+        });
         this.router
             .route(this._makePath(path))
-            .put(this._wrapFunction.apply(null, [connectionFunction, ...args, DATA]));
+            .put(...connectionFunctions);
         return this;
     }
     
-    delete(path, connector) {
-        const connectionFunction = this._getConnector(connector);
+    delete(path, ...connectors) {
+        const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
+        connectionFunctions.map(connectionFunction => {
+            return this._wrapFunction.apply(null, [connectionFunction, ...args]);
+        });
         this.router
             .route(this._makePath(path))    
-            .delete(this._wrapFunction.apply(null, [connectionFunction, ...args]));
+            .delete(...connectionFunctions);
         return this;
     }
     
-    patch(path, connector) {
-        const connectionFunction = this._getConnector(connector);
+    patch(path, ...connectors) {
+        const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
+        connectionFunctions.map(connectionFunction => {
+            return this._wrapFunction.apply(null, [connectionFunction, ...args, DATA]);
+        });
         this.router.patch(
             this._makePath(path), 
-            this._wrapFunction.apply(null, [connectionFunction, ...args, DATA]));
+            ...connectionFunctions);
         return this;
     }
 
@@ -121,12 +136,12 @@ module.exports = class Router {
     }
 
     _wrapFunction(connectionFunction, ...args) {
-        return function (request, response) {
+        return function (request, response, ...other) {
             let params = [];
             args.forEach(param => {
                 params = [...params, (response.locals[param] || undefined)];
             });
-            return connectionFunction.apply(null, [request, response, ...params]);
+            return connectionFunction.apply(null, [request, response, ...other, ...params]);
         }
     }
 
@@ -162,16 +177,17 @@ module.exports = class Router {
         
     }
 
-    _getConnector(connector) {
-        switch (typeof connector) {
-            case 'string': 
-                return this._getConnectorClassFunction(connector);
-            case 'function': 
-                return connector;
-            default: 
-                throw new Error('Router: Invalid connector type. Use either a function<serializable> or a string');
-        }
-        
+    _getConnector(connectors) {
+        return connectors.map(connector => {
+            switch (typeof connector) {
+                case 'string': 
+                    return this._getConnectorClassFunction(connector);
+                case 'function': 
+                    return connector;
+                default: 
+                    throw new Error('Router: Invalid connector type. Use either a function<serializable> or a string');
+            }
+        });
     }
 
 }
