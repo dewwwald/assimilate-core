@@ -12,7 +12,10 @@ module.exports = class ConfigProvider extends Provider {
             const Config = require('../Config/Config')
             next(new Config(config));
         })
-        .catch(console.error);
+        .catch(e => {
+            console.error(e);
+            throw e;
+        });
     }
 
     register(configInstance) {

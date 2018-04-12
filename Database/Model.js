@@ -54,9 +54,16 @@ module.exports = class Model {
 
     update(data) {
         return new Promise((function updateProimise(resolve, reject) {
-            this.model.findByIdAndUpdate(this.data._id, { 
-                $set: data
-            }, this._updateResponseHandle.bind(this, resolve, reject, data));
+            if (this.data._id) {
+                this.model.findOne({ _id: this.data._id }).exec((error, mongoUser) => {
+                    Object.keys(data).forEach(key => {
+                        mongoUser[key] = data[key];
+                    });
+                    mongoUser.save(this._updateResponseHandle.bind(this, resolve, reject, data));
+                });
+            } else {
+                reject(new Error('User not found'));
+            }
         }).bind(this));
     }
 

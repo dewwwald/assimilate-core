@@ -41,6 +41,7 @@ module.exports = class ProviderManager {
             try {
                 providerInstance.initialize(this._initializerCallback.bind(this, providerInstance, resolve, reject));
             } catch (e) {
+                console.error(e);
                 reject(e);
             }
         });
@@ -71,15 +72,13 @@ module.exports = class ProviderManager {
             nextProviderList = providersList.slice(1),
             _this = this;
 
-        this._initializeWrapper(provider)
-        .then(() => {
+        this._initializeWrapper(provider).then(() => {
             if (nextProviderList.length > 0) {
                 _this._recurseProviderInitialize(nextProviderList);
             } else {
                 _this._registerAndFinalize();
             }
-        })
-        .catch(e => {
+        }).catch(e => {
             console.error(e);
             throw new Error(e);
         });

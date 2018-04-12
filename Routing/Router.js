@@ -139,7 +139,7 @@ module.exports = class Router {
         let i = 0, model = undefined;
         const database = this.container.make('database');
         do {
-            if (database.modelList.includes('Model/' + tries[i])) {
+            if (database.modelList.includes(tries[i])) {
                 model = this.container.make('Model/' + tries[i], undefined, true);    
             }
             i++;

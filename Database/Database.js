@@ -36,12 +36,12 @@ module.exports = class Database {
      */
     constructor(config, modelExt) {
         if (config.connector === 'mongodb') {
-          mongoose.connect(`mongodb://${config.host}:${config.port}/${config.database}`)
-            .then(() => {
-              console.log(`Mongo DB connected, mongodb://${config.host}:${config.port}/${config.database}`);
-            })
-            .catch(e => {
-              console.error(e);
+            mongoose.Promise = Promise;
+            const dbName = `mongodb://${config.host}:${config.port}/${config.database}`;
+            mongoose.connect(dbName).then(() => {
+                console.log(`Mongo DB connected, ${dbName}`);
+            }).catch(e => {
+                console.error(e);
             });
           this.modelExt = modelExt;
           this.initialize();
