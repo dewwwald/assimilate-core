@@ -38,12 +38,9 @@ module.exports = class Router {
         const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
-        connectionFunctions.map(connectionFunction => {
-            return this._wrapFunction.apply(null, [connectionFunction, ...args]);
+        connectionFunctions.forEach(connectionFunction => {
+            this.router.get(this._makePath(path), this._wrapFunction(connectionFunction, ...args));
         });
-        this.router
-            .route(this._makePath(path))
-            .get(...connectionFunctions);
         return this;
     }
     
@@ -51,12 +48,9 @@ module.exports = class Router {
         const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
-        connectionFunctions.map(connectionFunction => {
-            return this._wrapFunction.apply(null, [connectionFunction, ...args, DATA]);
-        });
-        this.router
-            .route(this._makePath(path))
-            .post(...connectionFunctions);
+        connectionFunctions.forEach(connectionFunction => {
+            this.router.post(this._makePath(path), this._wrapFunction(connectionFunction, ...args, DATA));
+        });        
         return this;
     }
     
@@ -64,12 +58,9 @@ module.exports = class Router {
         const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
-        connectionFunctions.map(connectionFunction => {
-            return this._wrapFunction.apply(null, [connectionFunction, ...args, DATA]);
-        });
-        this.router
-            .route(this._makePath(path))
-            .put(...connectionFunctions);
+        connectionFunctions.forEach(connectionFunction => {
+            this.router.put(this._makePath(path), this._wrapFunction(connectionFunction, ...args, DATA));
+        });        
         return this;
     }
     
@@ -77,12 +68,9 @@ module.exports = class Router {
         const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
-        connectionFunctions.map(connectionFunction => {
-            return this._wrapFunction.apply(null, [connectionFunction, ...args]);
+        connectionFunctions.forEach(connectionFunction => {
+            this.router.delete(this._makePath(path), this._wrapFunction(connectionFunction, ...args));
         });
-        this.router
-            .route(this._makePath(path))    
-            .delete(...connectionFunctions);
         return this;
     }
     
@@ -90,12 +78,9 @@ module.exports = class Router {
         const connectionFunctions = this._getConnector(connectors);
         const args = this._buildArgs(path);
         this._configureParamListMiddleware(args);
-        connectionFunctions.map(connectionFunction => {
-            return this._wrapFunction.apply(null, [connectionFunction, ...args, DATA]);
+        connectionFunctions.forEach(connectionFunction => {
+            this.router.patch(this._makePath(path), this._wrapFunction(connectionFunction, ...args, DATA));
         });
-        this.router.patch(
-            this._makePath(path), 
-            ...connectionFunctions);
         return this;
     }
 
@@ -125,13 +110,15 @@ module.exports = class Router {
     _getConnectorClassFunction(containerName) {
         const routerConnectionName = new RegExp('([A-Z][A-Za-z]*)@([A-Za-z]*)');
         const matches = routerConnectionName.exec(containerName);
+        const controllerName = matches[1];
+        const controllerMethod = matches[2];
         const controllerExt = this.container.make('config').get('App.controllerExt');
-        const Controller = require(path.resolve('./Controllers/' + matches[1] + controllerExt));
+        const Controller = require(path.resolve('./Controllers/' + controllerName + controllerExt));
         const controllerInstance = new Controller(this.container);
-        if (defined(controllerInstance[matches[2]])) {
-            return controllerInstance[matches[2]].bind(controllerInstance);
+        if (defined(controllerInstance[controllerMethod])) {
+            return controllerInstance[controllerMethod].bind(controllerInstance);
         } else {
-            throw new Error('Controller: ' + matches[1] + ' has no function named ' + matches[2]);
+            throw new Error('Controller: ' + controllerName + ' has no function named ' + controllerMethod);
         }
     }
 
@@ -141,7 +128,7 @@ module.exports = class Router {
             args.forEach(param => {
                 params = [...params, (response.locals[param] || undefined)];
             });
-            return connectionFunction.apply(null, [request, response, ...other, ...params]);
+            connectionFunction(request, response, ...other, ...params);
         }
     }
 
@@ -165,12 +152,10 @@ module.exports = class Router {
     }
 
     _handleKnownParamsModels(current, model, request, response, next, value) {
-        model.find({ _id: value })
-        .then((value) => {
+        model.find({ _id: value }).then((value) => {
             response.locals[current] = value;
             next();
-        })
-        .catch((error) => {
+        }).catch((error) => {
             response.locals[current] = undefined;
             next();
         });
