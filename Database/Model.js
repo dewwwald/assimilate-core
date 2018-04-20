@@ -38,9 +38,27 @@ module.exports = class Model {
                 reject(new Error('Invalid id provided.'));
                 return;
             }
-            this.model
-                .findOne(query)
-                .exec(this._queryResponseHandle.bind(this, resolve, reject));
+            this.model.find(query).exec(this._queryResponseHandle.bind(this, resolve, reject));
+        }).bind(this));
+    }
+
+    findOne(query) {
+        return new Promise((function createFindQueryPromise(resolve, reject) {
+            if (query._id && !Types.ObjectId.isValid(query._id)) {
+                reject(new Error('Invalid id provided.'));
+                return;
+            }
+            this.model.findOne(query).exec(this._queryResponseHandle.bind(this, resolve, reject));
+        }).bind(this));
+    }
+
+    count(query) {
+        return new Promise((function createCountQueryPromise(resolve, reject) {
+            if (query._id && !Types.ObjectId.isValid(query._id)) {
+                reject(new Error('Invalid id provided.'));
+                return;
+            }
+            this.model.count(query).exec(this._queryResponseHandle.bind(this, resolve, reject));
         }).bind(this));
     }
 
@@ -55,14 +73,14 @@ module.exports = class Model {
     update(data) {
         return new Promise((function updateProimise(resolve, reject) {
             if (this.data._id) {
-                this.model.findOne({ _id: this.data._id }).exec((error, mongoUser) => {
+                this.model.findOne({ _id: this.data._id }, (error, mongoUser) => {
                     Object.keys(data).forEach(key => {
                         mongoUser[key] = data[key];
                     });
                     mongoUser.save(this._updateResponseHandle.bind(this, resolve, reject, data));
                 });
             } else {
-                reject(new Error('User not found'));
+                reject(new Error('@epitome/Model: document being updated not found.'));
             }
         }).bind(this));
     }

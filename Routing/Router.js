@@ -177,7 +177,7 @@ module.exports = class Router {
     }
 
     _handleKnownParamsModels(current, model, request, response, next, value) {
-        model.find({ _id: value }).then((value) => {
+        model.findOne({ _id: value }).then((value) => {
             response.locals[current] = value;
             next();
         }).catch((error) => {
