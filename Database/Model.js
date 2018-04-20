@@ -32,23 +32,23 @@ module.exports = class Model {
         }).bind(this));
     }
 
-    find(query) {
+    find(query, settings = {}) {
         return new Promise((function createFindQueryPromise(resolve, reject) {
             if (query._id && !Types.ObjectId.isValid(query._id)) {
                 reject(new Error('Invalid id provided.'));
                 return;
             }
-            this.model.find(query).exec(this._queryResponseHandle.bind(this, resolve, reject));
+            this.model.find(query, settings).exec(this._queryResponseHandle.bind(this, resolve, reject));
         }).bind(this));
     }
 
-    findOne(query) {
+    findOne(query, settings = {}) {
         return new Promise((function createFindQueryPromise(resolve, reject) {
             if (query._id && !Types.ObjectId.isValid(query._id)) {
                 reject(new Error('Invalid id provided.'));
                 return;
             }
-            this.model.findOne(query).exec(this._queryResponseHandle.bind(this, resolve, reject));
+            this.model.findOne(query, settings).exec(this._queryResponseHandle.bind(this, resolve, reject));
         }).bind(this));
     }
 
@@ -128,20 +128,24 @@ module.exports = class Model {
         return this.data;
     }
 
+    serializeData(serializable) {
+        const data = this.toJSON()._doc || this.toJSON();
+        Object.keys(data).forEach(key => {
+            if (!serializable.includes(key)) {
+                delete data[key];
+            }
+        });
+        return data;
+    }
+
     serialize() {
-        if (!this.data) 
+        if (!this.data)
             throw new Error(`attempted to @epitome.Model.serialize ${this.list} when unknown`);
         const serializable = this.serializable || SERIALIZE_ALL
         if (serializable === SERIALIZE_ALL) {
             return this.data;
         } else if (typeof serializable.length !== 'undefined') {
-            const data = this.toJSON()._doc || this.toJSON();
-            Object.keys(data).forEach(key => {
-                if (!serializable.includes(key)) {
-                    delete data[key];
-                }
-            });
-            return data;
+            return this.serializeData(serializable);
         } else {
             return [];
         }
