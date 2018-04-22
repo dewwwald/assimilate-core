@@ -1,7 +1,7 @@
 'use-strict';
 
 const path = require('path'),
-    Provider = require('./Provider');
+    Provider = require('../Provider/Provider');
 
 module.exports = class ConfigProvider extends Provider {
     initialize(next) {

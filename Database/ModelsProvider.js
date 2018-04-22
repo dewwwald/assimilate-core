@@ -1,6 +1,6 @@
 'use-strict';
 
-const Provider = require('./Provider'),
+const Provider = require('../Provider/Provider'),
     path = require('path'),
     fs = require('fs');
 

@@ -1,7 +1,7 @@
 'use-strict';
 
 const express = require('express'),
-    Provider = require('./Provider'),
+    Provider = require('../Provider/Provider'),
     path = require('path');
 
 module.exports = class RouterProvider extends Provider {

@@ -1,6 +1,6 @@
 'use-strict';
 
-const Provider = require('./Provider');
+const Provider = require('../Provider/Provider');
 
 module.exports = class DatabaseProvider extends Provider {
     initialize(next) {
