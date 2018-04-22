@@ -13,6 +13,7 @@ module.exports = class AppProvider extends Provider {
         const app = this.container.make('app');
         const config = this.container.make('config');
         const port = config.get('App.port');
+        app.disable('x-powered-by');
         app.listen(port, function () {
             console.info('Running on localhost:' + port);
         });
