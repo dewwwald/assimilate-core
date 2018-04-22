@@ -1,10 +1,10 @@
 'use-strict';
 
 const Provider = require('./Provider'),
+    ProviderExtensions = require('./ProviderExtensions'),
     ProviderManager = require('./ProviderManager'), {
         AppProvider,
         MiddlewareProvider,
-        ProviderExtensions,
         TestProvider,
         SeederProvider,
     } = require('./Core');

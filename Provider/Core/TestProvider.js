@@ -1,6 +1,6 @@
 'use-strict';
 
-const Provider = require('./Provider'),
+const Provider = require('../Provider'),
     fs = require('fs'),
     path = require('path'),
     request = require('supertest');
@@ -36,7 +36,7 @@ module.exports = class TestProvider extends Provider {
             }
         });
     }
-    
+
     _loadTests(testAbles) {
         let counter = 0;
         testAbles.forEach(testAble => {

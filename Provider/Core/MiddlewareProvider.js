@@ -1,6 +1,6 @@
 'use-strict';
 
-const Provider = require('./Provider'),
+const Provider = require('../Provider'),
     bodyparser = require('body-parser');
 
 module.exports = class MiddlewareProvider extends Provider {
