@@ -15,17 +15,17 @@ module.exports = class LocalStorage {
 
     localStorageDestination(req, file, cb) {
         mkDirFromRootSync(`${this.root}`, this._todaysLocation());
-        cb(null, `${this.root}/${this._todaysLocation()}/`);
+        cb(null, this._createRootFolder());
     }
 
     localStorageFilename(req, file, cb) {
         const ext = file.mimetype.split('/')[1];
         const filename = `${req.headers.slug || file.filename}`;
         if (isJpg.test(ext)) {
-            cb(null, isJpg.test(filename) ? filename : `${filename}.${ext}`);
+            cb(null, isJpg.test(filename) ? filename : this._fileExistsSlugger(`${filename}.${ext}`));
         } else {
             const extRegExp = new RegExp(`${ext}$`);
-            cb(null, extRegExp.test(filename) ? filename : `${filename}.${ext}`);
+            cb(null, extRegExp.test(filename) ? filename : this._fileExistsSlugger(`${filename}.${ext}`));
         }
     }
 
@@ -49,6 +49,52 @@ module.exports = class LocalStorage {
             default:
                 return multer.memoryStorage();
         }
+    }
+
+    _fileExistsSlugger(fileName) {
+        const filePath = this._createRootFolder() + fileName;
+        if (fs.existsSync(filePath)) {
+            const array = fileName.split('.');
+            array[array.length - 2] = this._appendRandom5(`${array[array.length - 2]}-`);
+            return array.join('.');
+        }
+
+        return fileName;
+    }
+
+    /**
+     * Append 5 random characters
+     * @param string value
+     * @param number index
+     * @return string
+     */
+    _appendRandom5(value, index = 0) {
+        const char = this._getRandomAlphaNumericChar();
+        value += char;
+        if (index < 4) {
+            return this._appendRandom5(value, index + 1);
+        } else {
+            return value;
+        }
+    }
+
+    /**
+     * Creates and returns a single random alphanumeric char
+     * @returns string;
+     */
+    _getRandomAlphaNumericChar() {
+        const random = Math.random();
+        if (random < .33) {
+            return String.fromCharCode(97 + Math.round(25 * Math.random()));
+        } else if (random < .67) {
+            return String.fromCharCode(65 + Math.round(25 * Math.random()));
+        } else {
+            return Math.round(9 * Math.random()).toString();
+        }
+    }
+
+    _createRootFolder() {
+        return `${this.root}/${this._todaysLocation()}/`;
     }
 
     _todaysLocation() {

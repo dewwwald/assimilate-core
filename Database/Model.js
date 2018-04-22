@@ -141,12 +141,23 @@ module.exports = class Model {
 
     serializeData(serializable) {
         const data = this.toJSON()._doc || this.toJSON();
-        Object.keys(data).forEach(key => {
-            if (!serializable.includes(key)) {
-                delete data[key];
-            }
-        });
-        return data;
+        if (!data.length) {
+            Object.keys(data).forEach(key => {
+                if (!serializable.includes(key)) {
+                    delete data[key];
+                }
+            });
+            return data;
+        } else {
+            return data.map(datum => datum.toJSON()).map(datum => {
+                Object.keys(datum).forEach(key => {
+                    if (!serializable.includes(key)) {
+                        delete datum[key];
+                    }
+                });
+                return datum;
+            });
+        }
     }
 
     serialize() {
