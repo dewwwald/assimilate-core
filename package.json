@@ -30,7 +30,19 @@
         "express": "4.16.2",
         "mocha": "5.0.5",
         "mongoose": "5.0.14",
-        "supertest": "3.0.0"
+        "supertest": "3.0.0",
+        "sanitize-html": "^1.18.2"
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "multer": "1.3.0",
+        "body-parser": "1.18.2",
+        "deep-assign": "2.0.0",
+        "dotenv": "5.0.1",
+        "express": "4.16.2",
+        "mocha": "5.0.5",
+        "mongoose": "5.0.14",
+        "supertest": "3.0.0",
+        "sanitize-html": "^1.18.2"
+    },
+    "dependencies": {}
 }

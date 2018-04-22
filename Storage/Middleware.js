@@ -1,6 +1,7 @@
 'use-strict';
 
 const multer = require('multer');
+const { DATA } = require('../Routing/Router.contants');
 const {
     MEMORY_STORAGE, LOCAL_STORAGE, AWS_S3_STORAGE, AwsS3Storage, LocalStorage
 } = require('./MiddlewareStores');
@@ -12,13 +13,54 @@ module.exports = class StorageMiddleware {
     get config() { return this._config; }
     set config(value) { this._config = value; }
 
+    get multer() { return this._multer; }
+    set multer(value) { this._multer = value; }
+
+    get multerMiddleware() { return this._multerMiddleware; }
+    set multerMiddleware(value) { this._multerMiddleware = value; }
+
     get providerList() {
         return [ MEMORY_STORAGE, LOCAL_STORAGE, AWS_S3_STORAGE ];
     }
 
     get() {
         if (!this.multer) this._setupMulter();
+        if (!this.multerMiddleware) this.multerMiddleware = this._createMiddleware();
+        return this.middlewareWrapperFunction;
+    }
 
+    middlewareWrapperFunction(request, response, next) {
+        this.multerMiddleware(request, response, (error) => {
+            this.middlewareWrapperCallback(error).then(() => {
+                response.locals[DATA] = request.body;
+                const cwd = process.cwd();
+                request.file.appLocation = request.file.destination.replace(cwd, '');
+                if (this.config.serve) {
+                    // public folder symlink pointer
+                    request.file.uri = request.file.path.replace(`${cwd}/storage/app`, '');
+                }
+                next();
+            });
+        });
+    }
+
+    middlewareWrapperCallback(error) {
+        return new Promise((resolve, reject) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    constructor(storageConfig) {
+        this.config = storageConfig;
+        this.middlewareWrapperFunction = this.middlewareWrapperFunction.bind(this);
+        this.middlewareWrapperCallback = this.middlewareWrapperCallback.bind(this);
+    }
+
+    _createMiddleware() {
         const { allow, fieldName, fieldList, maxCount = 1 } = this.config;
         if (allow === 'all') {
             console.warn(`WARNING: Uploading very large files, or relatively small
@@ -38,10 +80,6 @@ module.exports = class StorageMiddleware {
             No file upload configuration did not specify a middleware,
             no action will be taken`);
         return this.multer.none()
-    }
-
-    constructor(storageConfig) {
-        this.config = storageConfig;
     }
 
     _createMiddlewareStorage() {

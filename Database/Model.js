@@ -104,7 +104,7 @@ module.exports = class Model {
     constructor(modelName, data) {
         this._list = modelName;
         this.model = mongoose.model(modelName);
-        this._data = data || {};
+        this._data = this.fillData(data) || {};
     }
 
     _updateResponseHandle(resolve, reject, data, error) {
@@ -126,6 +126,17 @@ module.exports = class Model {
 
     toJSON() {
         return this.data;
+    }
+
+    fillData(data) {
+        if (this.fillable) {
+            Object.keys(data).forEach(fieldName => {
+                if (!this.fillable.includes(fieldName)) {
+                    delete data[fieldName];
+                }
+            });
+        }
+        return data;
     }
 
     serializeData(serializable) {
