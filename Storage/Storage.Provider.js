@@ -21,15 +21,15 @@ module.exports = class StorageProvider extends Provider {
         next();
     }
 
-    register() {
-    }
+    register() {}
 
     final() {
         const app = this.container.make('app');
         this.storageConfig.forEach(config => {
             if (config.serve) {
-                app.use(`/${config.module}`,
-                    express.static(`public/${config.module}`));
+                const symLoc = `Public/${config.module}`;
+                const target = path.resolve(`storage/app/${config.module}`);
+                if (!fs.existsSync(target)) fs.symlinkSync(target, path.resolve(symLoc), 'dir');
             }
         });
     }

@@ -13,7 +13,7 @@ module.exports = class LocalStorage {
     set config(value) { this._config = value; }
 
     localStorageDestination(req, file, cb) {
-        mkDirFromRootSync(this.root, this._todaysLocation());
+        mkDirFromRootSync(`${process.cwd()}/${this.root}`, this._todaysLocation());
         cb(null, `${this.root}/${this._todaysLocation()}/`);
     }
 
