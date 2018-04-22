@@ -1,9 +1,11 @@
 'use-strict';
 
 const Config = require('./Config'),
-    ConfigLoader = require('./ConfigLoader');
+    ConfigProvider = require('./ConfigProvider'),
+    ConfigLoader = require('./Config.loader');
 
 module.exports = {
     ConfigLoader,
+    ConfigProvider,
     Config
 };
