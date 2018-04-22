@@ -7,6 +7,7 @@ const Immutable = require('./Lib/Immutable'),
     pipeline = require('./Lib/pipeline'),
     defined = require('./Lib/defined'),
     CoreDatabase = require('./Database');
+    // Storage = require('./Storage');
 
 module.exports = {
     ...CoreDatabase,
@@ -15,5 +16,6 @@ module.exports = {
     boot,
     pipeline,
     defined,
-    Provider
+    Provider,
+    // Storage
 };

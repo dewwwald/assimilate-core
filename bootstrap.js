@@ -26,12 +26,13 @@ module.exports = function boot() {
 
     const { ModelsProvider, DatabaseProvider } = require('./Database'),
         {RouterProvider} = require('./Routing'),
+        {StorageProvider} = require('./Storage'),
         {ConfigProvider} = require('./Config'), {
             AppProvider,
             MiddlewareProvider,
             ProviderExtensions,
             TestProvider,
-            SeederProvider
+            SeederProvider,
         } = require('./Provider');
 
     providerManager.loadProviders([
@@ -42,6 +43,7 @@ module.exports = function boot() {
         ModelsProvider,
         ...ProviderExtensions.get(),
         RouterProvider,
+        StorageProvider,
         SeederProvider,
         TestProvider,
     ]);
