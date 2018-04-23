@@ -1,28 +1,27 @@
 'use-strict';
 
-function setupContainer() {
-    const { Container } = require('./Container');
-    const container = new Container();
-    return container;
-}
+const { ProviderManager } = require('./Provider');
+const { Container } = require('./Container');
 
 module.exports = function boot() {
     require('dotenv').config();
     
-    const { ProviderManager } = require('./Provider');
+    const container = new Container();
+    const providerManager = new ProviderManager(container);
 
-    const container = setupContainer();
+
     if (process.env.ENVIRONMENT === 'test') {
         // this is just a hack to keep mocha running long enough to load all the tests
-        describe('Test framework:', () => {
-            before(function (done) {
-                setTimeout(done, 50);
+        describe('Test framework database:', () => {
+            it('drops before testing: ', function (done) {
+                // this feels hackie but, it works 
+                providerManager.lifeCycle.on('initialized', () => {
+                    setTimeout(done, 50);
+                });
             });
-            
-            it('Successfully loaded tests...', () => {});
+
         });
     }
-    const providerManager = new ProviderManager(container);
 
     const { ModelsProvider, DatabaseProvider } = require('./Database'),
         {RouterProvider} = require('./Routing'),

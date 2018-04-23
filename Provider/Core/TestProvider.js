@@ -6,6 +6,16 @@ const Provider = require('../Provider'),
     request = require('supertest');
 
 module.exports = class TestProvider extends Provider {
+    initialize(done) {
+        this.config = this.container.make('config');
+        if (this.config.get('environment') === 'test') {
+            const database = this.container.make('database');
+            database.dropDatabase().then(() => {
+                done();
+            });
+        }
+    }
+
     register() {
         this.config = this.container.make('config');
         if (this.config.get('environment') === 'test') {

@@ -14,12 +14,25 @@ module.exports = class Database {
     set modelExt(modelExt) { this._modelExt = modelExt; }
 
     /**
+     * Config
+     * @var config@epitome
+     */
+    get config() { return this._config; }
+    set config(config) { this._config = config; }
+
+    /**
      * contains a list of all registered models
      * @var modelList
      */
     get modelList() { return this._modelList || []; }
     set modelList(value) { this._modelList = value; }
 
+    /**
+     * deference the current database connection
+     * @var connection
+     */
+    get instance() { return this._instance; }
+    set instance(value) { this._instance = value; }
 
     initialize() {
         const customModelsRoot = path.resolve('./Models');
@@ -35,11 +48,12 @@ module.exports = class Database {
      * @param { connector, host, port, database, username, password } config
      */
     constructor(config, modelExt) {
+        this.config = config;
         if (config.connector === 'mongodb') {
             mongoose.Promise = Promise;
-            const dbName = `mongodb://${config.host}:${config.port}/${config.database}`;
-            mongoose.connect(dbName).then(() => {
-                console.log(`Mongo DB connected, ${dbName}`);
+            const dbConnection = `mongodb://${config.host}:${config.port}/${config.database}`;
+            mongoose.connect(dbConnection).then((instance) => {
+                console.log(`Mongo DB connected, ${dbConnection}`);
             }).catch(e => {
                 console.error(e);
             });
@@ -67,6 +81,26 @@ module.exports = class Database {
         this.modelList = [modelName, ...this.modelList];
         Object.defineProperty(this, modelName, {
             getter: this._getModel.bind(null, modelName)
+        });
+    }
+
+    _dropDatabaseNow() {
+        return new Promise((resolve, reject) => {
+            mongoose.connection.db.dropDatabase((err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    dropDatabase() {
+        return new Promise((resolve, reject) => {
+            mongoose.connection.once('open', () => {
+                this._dropDatabaseNow().then(() => resolve()).catch(e => reject(e));
+            });
         });
     }
 }

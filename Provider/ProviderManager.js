@@ -1,3 +1,5 @@
+const EventEmitter = require('events');
+
 'use-strict';
 
 module.exports = class ProviderManager {
@@ -25,6 +27,17 @@ module.exports = class ProviderManager {
 
     set finalizers(value) {
         this._finalizers = value;
+    }
+
+    get lifeCycle() {
+        if (!this._lifeCycle) {
+            this.lifeCycle = new EventEmitter();
+        }
+        return this._lifeCycle;
+    }
+
+    set lifeCycle(eventEmitter) {
+        this._lifeCycle = eventEmitter;
     }
 
     loadProviders(providersList) {
@@ -67,22 +80,18 @@ module.exports = class ProviderManager {
         }
     }
 
-    _recurseProviderInitialize(providersList) {
-        const provider = providersList[0],
-            nextProviderList = providersList.slice(1),
-            _this = this;
-
-        this._initializeWrapper(provider).then(() => {
-            if (nextProviderList.length > 0) {
-                _this._recurseProviderInitialize(nextProviderList);
-            } else {
-                _this._registerAndFinalize();
-            }
-        }).catch(e => {
-            console.error(e);
-            throw new Error(e);
-        });
+    _recurseProviderInitialize([provider, ...providersList]) {
+        if (provider) {
+            this._initializeWrapper(provider).then(() => {
+                this._recurseProviderInitialize(providersList);
+            }).catch(e => {
+                console.error(e);
+                throw new Error(e);
+            });
+        } else {
+            this.lifeCycle.emit('initialized');
+            this._registerAndFinalize();
+        }
     }
-
 
 }

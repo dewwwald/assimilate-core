@@ -88,13 +88,13 @@ module.exports = class Model {
     delete() {
         return new Promise((function deleteProimise(resolve, reject) {
             if (this.data) {
-                this.data.remove(function (error, object) {
+                this.data.remove((function (error, object) {
                     if (error) {
                         reject(error);
                         return;
                     }
-                    resolve(object);
-                });
+                    resolve(this);
+                }).bind(this));
             } else {
                 resolve(null);
             }
