@@ -26,6 +26,7 @@ module.exports = function boot() {
     const { ModelsProvider, DatabaseProvider } = require('./Database'),
         {RouterProvider} = require('./Routing'),
         {StorageProvider} = require('./Storage'),
+        { JobsProvider } = require('./Jobs'),
         {ConfigProvider} = require('./Config'), {
             AppProvider,
             MiddlewareProvider,
@@ -42,6 +43,7 @@ module.exports = function boot() {
         ModelsProvider,
         ...ProviderExtensions.get(),
         RouterProvider,
+        JobsProvider,
         StorageProvider,
         SeederProvider,
         TestProvider,
