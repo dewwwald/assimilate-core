@@ -26,6 +26,11 @@ module.exports = class Model {
         return this._data;
     }
 
+    /**
+     * @var Array<Object keys>
+     */
+    get fillable() { return undefined; }
+
     get() {
         return new Promise((function createGetQueryPromise(resolve, reject) {
             this.model.find(this._queryResponseHandle.bind(this, resolve, reject));
