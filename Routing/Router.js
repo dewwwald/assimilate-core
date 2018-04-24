@@ -178,11 +178,15 @@ module.exports = class Router {
 
     _handleKnownParamsModels(current, model, request, response, next, value) {
         model.findOne({ _id: value }).then((value) => {
-            response.locals[current] = value;
-            next();
+            if (value.data) {
+                response.locals[current] = value;
+                next();
+            } else {
+                response.status(404).json({ message: `the ${model.list} could not be fount.` });
+            }
         }).catch((error) => {
             response.locals[current] = undefined;
-            next();
+            response.status(500).json({ message: `the ${model.list} could not be fetched, server error.` });
         });
         
     }
