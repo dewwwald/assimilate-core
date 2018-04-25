@@ -13,6 +13,8 @@ module.exports = class TestProvider extends Provider {
             database.dropDatabase().then(() => {
                 done();
             });
+        } else {
+            done();
         }
     }
 
