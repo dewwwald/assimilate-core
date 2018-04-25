@@ -22,7 +22,8 @@ module.exports = class TestProvider extends Provider {
         this.config = this.container.make('config');
         if (this.config.get('environment') === 'test') {
             this.container.registerSingleton('test/agent', request(this.container.make('app')));
-            this.container.registerSingleton('test/agent_two', request(this.container.make('app')));            this.testFileExt = this.config.get('Test.testExtension') || 'test.js';
+            this.container.registerSingleton('test/agent_two', request(this.container.make('app')));
+            this.testFileExt = this.config.get('Test.testExtension') || 'test.js';
             this.container.registerSingleton('test/agent_three', request(this.container.make('app')));
             const testAbles = this.config.get('Test.testAbles');
             if (testAbles.length > 0) {
