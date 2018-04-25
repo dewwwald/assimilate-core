@@ -108,7 +108,7 @@ module.exports = class JobAction {
      */
     _callbackFactory(state) {
         return {
-            success: () => this._handleSuccess(state),
+            success: info => this._handleSuccess(info, state),
             fail: e => this._handleFailed(e, state)
         };
     }

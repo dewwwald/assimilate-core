@@ -23,6 +23,9 @@ module.exports = class JobTest {
     get deferred() { return this._deferred || {}; }
     set deferred(value) { this._deferred = value; }
 
+    get deferredCallbacks() { return this._deferredCallbacks || {}; }
+    set deferredCallbacks(value) { this._deferredCallbacks = value; }
+
     /**
      * set jobs emitter
      */
@@ -37,11 +40,14 @@ module.exports = class JobTest {
         this.emitter = eventEmitter;
         this.container = container;
         this.config = config;
-        this._handleDeferredCallback = this._handleDeferredCallback.bind(this);
     }
 
     defer(eventName) {
-        this.emitter.on(eventName, this._handleDeferredCallback);
+        if (this.deferredCallbacks[eventName]) {
+            this.emitter.on(eventName, this.deferredCallbacks[eventName]);
+        } else {
+            this.deferredCallbacks[eventName] = this._handleDeferredCallback.bind(this, eventName);
+        }
     }
 
     success(eventName, state) {
@@ -62,11 +68,14 @@ module.exports = class JobTest {
         } else {
             this.emitter.on(eventName, callback);
         }
-        this.emitter.removeListener(eventName, this._handleDeferredCallback);
+        if (this.deferredCallbacks[eventName]) {
+            this.emitter.removeListener(eventName, this.deferredCallbacks[eventName]);
+        }
         delete this.deferred[eventName];
     }
 
-    _handleDeferredCallback(state) {
+    _handleDeferredCallback(eventName, state) {
+        console.log(eventName, state);
         this.deferred[eventName] = state;
     }
 }
