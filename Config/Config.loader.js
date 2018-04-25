@@ -1,6 +1,6 @@
 'use-strict';
 
-const path = require('path'), 
+const path = require('path'),
     fs = require('fs'),
     deepAssign = require('deep-assign'),
     { Immutable, defined } = require('../');
@@ -44,7 +44,7 @@ class ConfigLoader {
             return;
         }
         Promise.all([
-            this._resolveConfigFiles(filenameList), 
+            this._resolveConfigFiles(filenameList),
             this._expandEnvironmentConfig()
         ]).then(([config, envConfig]) => {
             this._setConfig(deepAssign(config, envConfig, { environment: process.env.ENVIRONMENT }));
@@ -52,7 +52,7 @@ class ConfigLoader {
         });
     }
 
-    _loadConfig(resolve, reject) {    
+    _loadConfig(resolve, reject) {
         fs.readdir(
             path.resolve('./Config/'),
             (error, filenameList) => this._handleConfigFileList
@@ -81,7 +81,7 @@ class ConfigLoader {
             resolve(this.config);
         } else if(!defined(this.configLoader)) {
             this.configLoader = new Promise(this._loadConfig);
-            this.configLoader.then(val => this._loadingSuccess.apply(this, [val, ...arguments])) 
+            this.configLoader.then(val => this._loadingSuccess.apply(this, [val, ...arguments]))
                 .catch(error => this._loadingError.apply(this, [error, ...arguments]));
         } else {
             this.configLoader.then(resolve).catch(reject);

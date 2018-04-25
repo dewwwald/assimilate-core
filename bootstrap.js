@@ -5,16 +5,15 @@ const { Container } = require('./Container');
 
 module.exports = function boot() {
     require('dotenv').config();
-    
+
     const container = new Container();
     const providerManager = new ProviderManager(container);
-
 
     if (process.env.ENVIRONMENT === 'test') {
         // this is just a hack to keep mocha running long enough to load all the tests
         describe('Test framework database:', () => {
             it('drops before testing: ', function (done) {
-                // this feels hackie but, it works 
+                // this feels hackie but, it works
                 providerManager.lifeCycle.on('initialized', () => {
                     setTimeout(done, 50);
                 });
@@ -48,5 +47,5 @@ module.exports = function boot() {
         SeederProvider,
         TestProvider,
     ]);
-    
+
 }
