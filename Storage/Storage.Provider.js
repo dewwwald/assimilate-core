@@ -14,7 +14,7 @@ module.exports = class StorageProvider extends Provider {
         this.config = this.container.make('config');
         const storageConfig = this.config.get('Storage');
         this.storageConfig = storageConfig;
-        storageConfig.forEach(config => {
+        storageConfig.units.forEach(config => {
             const storage = new Storage(config);
             this.container.registerSingleton('Storage/' + config.module, storage);
         });

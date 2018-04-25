@@ -35,10 +35,7 @@ module.exports = class StorageMiddleware {
                 response.locals[DATA] = request.body;
                 const cwd = process.cwd();
                 request.file.appLocation = request.file.destination.replace(cwd, '');
-                if (this.config.serve) {
-                    // public folder symlink pointer
-                    request.file.uri = request.file.path.replace(`${cwd}/storage/app`, '');
-                }
+                request.file.uri = request.file.path.replace(`${cwd}/storage/app`, '');
                 next();
             });
         });
