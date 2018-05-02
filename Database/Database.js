@@ -51,7 +51,12 @@ module.exports = class Database {
         this.config = config;
         if (config.connector === 'mongodb') {
             mongoose.Promise = Promise;
-            const dbConnection = `mongodb://${config.host}:${config.port}/${config.database}`;
+            const host = `${config.host}${config.port ? ':' + config.port : ''}`;
+            const credentials = `${config.username && config.password
+                ? config.username + ':' + config.password + '@'
+                : ''}`.trim();
+            const srv = config.localhost ? 'mongodb' : 'mongodb+srv'
+            const dbConnection = `${srv}://${credentials}${host}/${config.database}`;
             mongoose.connect(dbConnection).then((instance) => {
                 console.log(`Mongo DB connected, ${dbConnection}`);
             }).catch(e => {

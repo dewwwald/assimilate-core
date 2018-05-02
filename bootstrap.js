@@ -4,6 +4,7 @@ const { ProviderManager } = require('./Provider');
 const { Container } = require('./Container');
 
 module.exports = function boot() {
+
     require('dotenv').config();
 
     const container = new Container();
