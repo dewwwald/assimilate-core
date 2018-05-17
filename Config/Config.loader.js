@@ -47,8 +47,20 @@ class ConfigLoader {
             this._resolveConfigFiles(filenameList),
             this._expandEnvironmentConfig()
         ]).then(([config, envConfig]) => {
-            this._setConfig(deepAssign(config, envConfig, { environment: process.env.ENVIRONMENT }));
-            resolve(this.config);
+            try {
+                const newConf = deepAssign(config, envConfig, { environment: process.env.ENVIRONMENT });
+                this._setConfig(newConf);
+                resolve(this.config);
+            } catch (e) {
+                console.log(e);
+                console.warn(`
+        ________________________________________________________________________
+        #EPITOME NOTE
+        No config of undefined is allowed as a limitation of deepAssign.
+        Initialize env vars to empty string.`);
+            }
+        }).catch(e => {
+            console.error(e);
         });
     }
 
@@ -60,6 +72,7 @@ class ConfigLoader {
     }
 
     _setConfig(value) {
+        console.log(value);
         const config = this.immutable.createFrozen(value);
         Object.defineProperty(this, "config", {
             writable: false, enumerable: true, configurable: true, value: config

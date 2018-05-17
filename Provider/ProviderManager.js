@@ -82,6 +82,7 @@ module.exports = class ProviderManager {
 
     _recurseProviderInitialize([provider, ...providersList]) {
         if (provider) {
+            console.log('Loading provider ' + provider.constructor.name);
             this._initializeWrapper(provider).then(() => {
                 this._recurseProviderInitialize(providersList);
             }).catch(e => {
