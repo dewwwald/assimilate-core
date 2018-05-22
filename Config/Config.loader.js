@@ -72,7 +72,6 @@ class ConfigLoader {
     }
 
     _setConfig(value) {
-        console.log(value);
         const config = this.immutable.createFrozen(value);
         Object.defineProperty(this, "config", {
             writable: false, enumerable: true, configurable: true, value: config

@@ -75,7 +75,6 @@ module.exports = class JobTest {
     }
 
     _handleDeferredCallback(eventName, state) {
-        console.log(eventName, state);
         this.deferred[eventName] = state;
     }
 }
