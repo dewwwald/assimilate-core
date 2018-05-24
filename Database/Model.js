@@ -39,17 +39,20 @@ module.exports = class Model {
 
     find(query, settings = {}) {
         return new Promise((function createFindQueryPromise(resolve, reject) {
-            if (query._id && !Types.ObjectId.isValid(query._id)) {
+            if (typeof query._id['$in'] === 'undefined' &&
+                query._id && !Types.ObjectId.isValid(query._id)) {
                 reject(new Error('Invalid id provided.'));
-                return;
+            } else {
+                this.model.find(query, settings).exec(
+                    this._queryResponseHandle.bind(this, resolve, reject));
             }
-            this.model.find(query, settings).exec(this._queryResponseHandle.bind(this, resolve, reject));
         }).bind(this));
     }
 
     findOne(query, settings = {}) {
         return new Promise((function createFindQueryPromise(resolve, reject) {
-            if (query._id && !Types.ObjectId.isValid(query._id)) {
+            if (typeof query._id['$in'] === 'undefined' &&
+                query._id && !Types.ObjectId.isValid(query._id)) {
                 reject(new Error('Invalid id provided.'));
                 return;
             }
@@ -59,7 +62,8 @@ module.exports = class Model {
 
     count(query) {
         return new Promise((function createCountQueryPromise(resolve, reject) {
-            if (query._id && !Types.ObjectId.isValid(query._id)) {
+            if (typeof query._id['$in'] === 'undefined' &&
+                query._id && !Types.ObjectId.isValid(query._id)) {
                 reject(new Error('Invalid id provided.'));
                 return;
             }
@@ -144,7 +148,7 @@ module.exports = class Model {
         return data;
     }
 
-    serializeData(serializable) {
+    serializeData(serializable, data) {
         const data = this.toJSON()._doc || this.toJSON();
         if (!data.length) {
             Object.keys(data).forEach(key => {
