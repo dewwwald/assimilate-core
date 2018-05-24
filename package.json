@@ -1,6 +1,6 @@
 {
     "name": "epitome-core",
-    "version": "0.0.0-aplha.8",
+    "version": "0.0.0-aplha.9",
     "description": "A core for epitome framework",
     "main": "index.js",
     "scripts": {
