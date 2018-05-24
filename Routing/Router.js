@@ -46,7 +46,7 @@ module.exports = class Router {
         this.router.get(this._makePath(path), this._reverseWrapFunction(mainControllerƒ, ...args));
         return this;
     }
-    
+
     post(path, ...connectors) {
         const connectorsLastIndex = connectors.length - 1
         const mainControllerƒ = this._getConnector(connectors[connectorsLastIndex]);
@@ -55,11 +55,11 @@ module.exports = class Router {
         this._configureParamListMiddleware(args);
         middlewareFunctions.forEach(middlewareƒ => {
             this.router.post(this._makePath(path), this._wrapFunction(middlewareƒ, ...args, DATA));
-        }); 
-        this.router.post(this._makePath(path), this._reverseWrapFunction(mainControllerƒ, ...args, DATA));       
+        });
+        this.router.post(this._makePath(path), this._reverseWrapFunction(mainControllerƒ, ...args, DATA));
         return this;
     }
-    
+
     put(path, ...connectors) {
         const connectorsLastIndex = connectors.length - 1
         const mainControllerƒ = this._getConnector(connectors[connectorsLastIndex]);
@@ -68,11 +68,11 @@ module.exports = class Router {
         this._configureParamListMiddleware(args);
         middlewareFunctions.forEach(middlewareƒ => {
             this.router.put(this._makePath(path), this._wrapFunction(middlewareƒ, ...args, DATA));
-        }); 
-        this.router.put(this._makePath(path), this._reverseWrapFunction(mainControllerƒ, ...args, DATA));       
+        });
+        this.router.put(this._makePath(path), this._reverseWrapFunction(mainControllerƒ, ...args, DATA));
         return this;
     }
-    
+
     delete(path, ...connectors) {
         const connectorsLastIndex = connectors.length - 1
         const mainControllerƒ = this._getConnector(connectors[connectorsLastIndex]);
@@ -85,7 +85,7 @@ module.exports = class Router {
         this.router.delete(this._makePath(path), this._reverseWrapFunction(mainControllerƒ, ...args));
         return this;
     }
-    
+
     patch(path, ...connectors) {
         const connectorsLastIndex = connectors.length - 1
         const mainControllerƒ = this._getConnector(connectors[connectorsLastIndex]);
@@ -111,7 +111,7 @@ module.exports = class Router {
         this._container = container;
         this._router = router;
     }
-    
+
     _makePath(...args) {
         return args.reduce((pre, curr) => pre + '/' + curr, '').replace(new RegExp('[/]{1,3}'), '/');
     }
@@ -131,27 +131,27 @@ module.exports = class Router {
         const Controller = require(path.resolve('./Controllers/' + controllerName + controllerExt));
         const controllerInstance = new Controller(this.container);
         if (defined(controllerInstance[controllerMethod])) {
-            return controllerInstance[controllerMethod].bind(controllerInstance);
+            return (...args) => controllerInstance[controllerMethod](...args);
         } else {
             throw new Error('Controller: ' + controllerName + ' has no function named ' + controllerMethod);
         }
     }
 
     _reverseWrapFunction(mainControllerƒ, ...args) {
-        return function (request, response, ...other) {
-            let params = [];
+        return (request, response, ...other) => {
+            const params = [];
             args.forEach(param => {
-                params = [...params, (response.locals[param] || undefined)];
+                params.push(response.locals[param] || undefined);
             });
             mainControllerƒ(request, response, ...params, ...other);
         }
     }
 
     _wrapFunction(middlewareƒ, ...args) {
-        return function (request, response, ...other) {
-            let params = [];
+        return (request, response, ...other) => {
+            const params = [];
             args.forEach(param => {
-                params = [...params, (response.locals[param] || undefined)];
+                params.push(response.locals[param] || undefined);
             });
             middlewareƒ(request, response, ...other, ...params);
         }
@@ -163,20 +163,21 @@ module.exports = class Router {
 
     _configureParamNameMiddleware(param) {
         const tries = [param.charAt(0).toUpperCase() + param.substring(1), param];
-        let i = 0, model = undefined;
+        let i = 0, modelMake = undefined;
         const database = this.container.make('database');
         do {
             if (database.modelList.includes(tries[i])) {
-                model = this.container.make('Model/' + tries[i], undefined, true);    
+                modelMake = this.container.make.bind(this.container, 'Model/' + tries[i], undefined, true);
             }
             i++;
-        } while (i < tries.length && !defined(model)) 
-        if (defined(model)) {
-            this.router.param(param, this._handleKnownParamsModels.bind(this, param, model));
+        } while (i < tries.length && !defined(modelMake))
+        if (defined(modelMake)) {
+            this.router.param(param, this._handleKnownParamsModels.bind(this, param, modelMake));
         }
     }
 
-    _handleKnownParamsModels(current, model, request, response, next, value) {
+    _handleKnownParamsModels(current, modelMake, request, response, next, value) {
+        const model = modelMake();
         model.findOne({ _id: value }).then((value) => {
             if (value.data) {
                 response.locals[current] = value;
@@ -188,16 +189,16 @@ module.exports = class Router {
             response.locals[current] = undefined;
             response.status(500).json({ message: `the ${model.list} could not be fetched, server error.` });
         });
-        
+
     }
 
     _getConnector(connector) {
         switch (typeof connector) {
-            case 'string': 
+            case 'string':
                 return this._getConnectorClassFunction(connector);
-            case 'function': 
+            case 'function':
                 return connector;
-            default: 
+            default:
                 throw new Error('Router: Invalid connector type. Use either a function<serializable> or a string');
         }
     }
