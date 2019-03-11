@@ -5,8 +5,10 @@ module.exports = class Config {
         this.config = config;
     }
 
-    get(dotNotation) {
+    get(dotNotation, defaultValue = undefined) {
         return dotNotation.split('.').reduce(
-            (config, key) => config[key], this.config);
+            (config, key) => typeof config !== 'undefined' && config[key]
+                ? config[key]
+                : defaultValue, this.config);
     }
 }
