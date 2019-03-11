@@ -43,7 +43,10 @@ module.exports = class LocalStorage {
             case LOCAL_STORAGE:
                 return multer.diskStorage({
                     destination: this.localStorageDestination,
-                    filename: this.localStorageFilename
+                    filename: this.localStorageFilename,
+                    limits: this.config.limits | {
+                        fieldSize: 1024 * 1024 * 8
+                    }
                 });
             case MEMORY_STORAGE:
             default:
