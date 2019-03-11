@@ -8,12 +8,12 @@ module.exports = class MiddlewareProvider extends Provider {
     initialize(next) {
         const app = this.container.make('app');
         const config = this.container.make('config');
-        app.use(bodyparser.urlencoded({ extended: true, limit: config.Storage.limits && config.Storage.limits.fieldSize
-                ? config.Storage.limits.fieldSize : 1024 * 1024 * 8
+        app.use(bodyparser.urlencoded({
+            extended: true,
+            limit: config.get('Storage.limits.fieldSize', 1024 * 1024 * 8)
         }));
         app.use(bodyparser.json({
-            limit: config.Storage.limits && config.Storage.limits.fieldSize
-                ? config.Storage.limits.fieldSize : 1024 * 1024 * 8
+            limit: config.get('Storage.limits.fieldSize', 1024 * 1024 * 8)
         }));
         next();
     }
